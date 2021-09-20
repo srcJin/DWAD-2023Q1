@@ -65,6 +65,8 @@ RUN echo 'alias run="python3 $GITPOD_REPO_ROOT/manage.py runserver 0.0.0.0:8000"
     echo 'alias font_fix="python3 $GITPOD_REPO_ROOT/.vscode/font_fix.py"' >> ~/.bashrc && \
     echo ". /etc/mysql/mysql-bashrc-launch.sh" >> ~/.bashrc
 
+RUN npm install -g nodemon
+
 # Local environment variables
 # C9USER is temporary to allow the MySQL Gist to run
 ENV C9_USER="gitpod"
