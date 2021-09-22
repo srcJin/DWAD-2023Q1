@@ -3,9 +3,6 @@ FROM gitpod/workspace-full
 # Setup Heroku CLI
 RUN curl https://cli-assets.heroku.com/install.sh | sh
 
-# Setup Python linters
-
-RUN pip3 install flake8 flake8-flask flake8-django
 
 # Setup MongoDB and MySQL
 RUN sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 20691eec35216c63caf66ce1656408e390cfb1f5 && \
@@ -19,23 +16,6 @@ RUN sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 20691eec35
     sudo rm -rf /var/cache/apt/* /var/lib/apt/lists/* /tmp/* && \
     sudo mkdir /var/run/mysqld && \
     sudo chown -R gitpod:gitpod /etc/mysql /var/run/mysqld /var/log/mysql /var/lib/mysql /var/lib/mysql-files /var/lib/mysql-keyring /var/lib/mysql-upgrade /home/gitpod/.cache/heroku/
-
-# Setup PostgreSQL
-
-RUN sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list' && \
-    sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8 && \
-    sudo apt-get update -y && \
-    sudo apt-get install -y postgresql-12
-
-ENV PGDATA="/workspace/.pgsql/data"
-
-RUN mkdir -p ~/.pg_ctl/bin ~/.pg_ctl/sockets \
-    && echo '#!/bin/bash\n[ ! -d $PGDATA ] && mkdir -p $PGDATA && initdb --auth=trust -D $PGDATA\npg_ctl -D $PGDATA -l ~/.pg_ctl/log -o "-k ~/.pg_ctl/sockets" start\n' > ~/.pg_ctl/bin/pg_start \
-    && echo '#!/bin/bash\npg_ctl -D $PGDATA -l ~/.pg_ctl/log -o "-k ~/.pg_ctl/sockets" stop\n' > ~/.pg_ctl/bin/pg_stop \
-    && chmod +x ~/.pg_ctl/bin/*
-
-ENV PGHOSTADDR="127.0.0.1"
-ENV PGDATABASE="postgres"
 
 # Upgrade Node
 
@@ -60,9 +40,6 @@ COPY .vscode/start_mysql.sh /etc/mysql/mysql-bashrc-launch.sh
 
 RUN echo 'alias run="python3 $GITPOD_REPO_ROOT/manage.py runserver 0.0.0.0:8000"' >> ~/.bashrc && \
     echo 'alias heroku_config=". $GITPOD_REPO_ROOT/.vscode/heroku_config.sh"' >> ~/.bashrc && \
-    echo 'alias python=python3' >> ~/.bashrc && \
-    echo 'alias pip=pip3' >> ~/.bashrc && \
-    echo 'alias font_fix="python3 $GITPOD_REPO_ROOT/.vscode/font_fix.py"' >> ~/.bashrc && \
     echo ". /etc/mysql/mysql-bashrc-launch.sh" >> ~/.bashrc
 
 RUN npm install -g nodemon
