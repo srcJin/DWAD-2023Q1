@@ -1,0 +1,9 @@
+{
+  "dev": {
+    "driver": "mysql",
+    "user": "foo",
+    "password": "bar",
+    "database": "organic"
+  },
+  "__comment__": "https://db-migrate.readthedocs.io/en/latest/Getting%20Started/configuration/"
+}
