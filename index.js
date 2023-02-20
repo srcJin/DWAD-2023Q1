@@ -2,6 +2,9 @@ const express = require('express');
 const hbs = require('hbs'); // https://www.npmjs.com/package/hbs
 const wax = require('wax-on'); // https://www.npmjs.com/package/wax-on
 
+// import in the routes
+const landingRoutes = require('./routes/landing');
+
 // create an instance of express app
 const app = express();
 
@@ -23,9 +26,7 @@ app.use(
 );
 
 // register routes
-app.get('/', (_, res) => {
-  res.send("It's alive!");
-});
+app.use('/', landingRoutes);
 
 async function main() {}
 main();
