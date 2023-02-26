@@ -12,7 +12,7 @@ const app = express();
 app.set('view engine', 'hbs'); // Add support for handlebars templating engine {{ ... }}
 
 // static folder
-app.use(express.static('public'));
+app.use(express.static('.')); // Seems like express@4.18.2 already appends 'public' to the path
 
 // setup wax-on
 wax.on(hbs.handlebars); // register wax-on helpers with handlerbars
