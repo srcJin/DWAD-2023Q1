@@ -4,6 +4,7 @@ const wax = require('wax-on'); // https://www.npmjs.com/package/wax-on
 
 // import in the routes
 const landingRoutes = require('./routes/landing');
+const productsRoutes = require('./routes/products');
 
 // create an instance of express app
 const app = express();
@@ -27,6 +28,7 @@ app.use(
 
 // register routes
 app.use('/', landingRoutes);
+app.use('/products', productsRoutes);
 
 async function main() {}
 main();
