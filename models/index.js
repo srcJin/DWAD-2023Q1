@@ -5,5 +5,5 @@ const Products = bookshelf.model('Product', {
 });
 
 module.exports = {
-  Products
+  Products,
 };
