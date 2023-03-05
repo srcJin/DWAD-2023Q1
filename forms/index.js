@@ -3,6 +3,7 @@ const forms = require('forms');
 // handy shortcuts
 const fields = forms.fields;
 const validators = forms.validators;
+const widgets = forms.widgets;
 
 const bootstrapField = function (name, object) {
     if (!Array.isArray(object.widget.classes)) { object.widget.classes = []; }
@@ -24,7 +25,7 @@ const bootstrapField = function (name, object) {
     return '<div class="form-group">' + label + widget + error + '</div>';
 };
 
-const createProductForm = function() {
+const createProductForm = function(categories) {
     // forms.create allows us to create a new form definition
     // instead of using HTML to write the forms, we use objects to define them
     // the `key` will be the value for the name attribute
@@ -43,6 +44,16 @@ const createProductForm = function() {
         "description": fields.string({
             "required": true,
             "errorAfterField": true
+        }),
+        "category_id": fields.string({
+            "label": 'Category',
+            "required": true,
+            "errorAfterField": true,
+            "cssClasses": {
+                "label": ['form-label'],
+            },
+            "widget": widgets.select(),
+            "choices": categories,
         })
     });
 }

@@ -3,29 +3,34 @@ const { createProductForm, bootstrapField } = require("../forms")
 const router = express.Router();
 
 const {
-  Products
+  Products, Categories
 } = require('../models');
 
 router.get('/', async (req, res) => {
   // SELECT * FROM products;
-  let products = await Products.collection().fetch();
+  let products = await Products.collection().fetch({withRelated: ['category']});
   res.render('products/index', {
     products: products.toJSON(),
   });
 })
 
 // display the form for creating a new product
-router.get("/create", function(req,res){
-  const productForm = createProductForm();
+router.get("/create", async function(req,res){
+  let categoryObjects = await Categories.fetchAll();
+  let categories = categoryObjects.map((category) => [category.get('id'), category.get('name')]);
+
+  const productForm = createProductForm(categories);
   res.render("products/create", {
     "form": productForm.toHTML(bootstrapField)
   })
 })
 
 // process the submitted form
-router.post("/create",  function(req,res){
+router.post("/create", async function(req,res){
   // recreate the form object first
-  const productForm = createProductForm();
+  let categoryObjects = await Categories.fetchAll();
+  let categories = categoryObjects.map((category) => [category.get('id'), category.get('name')]);
+  const productForm = createProductForm(categories);
 
   // handle will process the form for us
   // first parameter: req
@@ -36,10 +41,7 @@ router.post("/create",  function(req,res){
 
        // one instance of Products will represent one row
        // in the Products table
-       const product = new Products();
-       product.set("name", form.data.name);
-       product.set("cost", form.data.cost);
-       product.set("description", form.data.description);
+       const product = new Products(form.data);
 
        // remember to save the newly created product
        await product.save();
@@ -74,11 +76,15 @@ router.get("/update/:product_id", async function(req,res){
   });
 
   // create product form
-  const productForm = createProductForm();
+  let categoryObjects = await Categories.fetchAll();
+  let categories = categoryObjects.map((category) => [category.get('id'), category.get('name')]);
+  const productForm = createProductForm(categories);
+
   // set the initial value for each field
   productForm.fields.name.value = product.get('name');
   productForm.fields.cost.value = product.get('cost');
   productForm.fields.description.value = product.get('description');
+  productForm.fields.category_id.value = product.get('category_id');
 
   res.render("products/update", {
     "form": productForm.toHTML(bootstrapField),
@@ -89,7 +95,9 @@ router.get("/update/:product_id", async function(req,res){
 
 // update the product
 router.post("/update/:product_id",  async function(req,res){
-  const productForm = createProductForm();
+  let categoryObjects = await Categories.fetchAll();
+  let categories = categoryObjects.map((category) => [category.get('id'), category.get('name')]);
+  const productForm = createProductForm(categories);
 
   // fetch the product that we want to edit
   const productId = req.params.product_id;
