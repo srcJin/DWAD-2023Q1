@@ -6,6 +6,21 @@ const Products = bookshelf.model('Product', {
   category() {
     return this.belongsTo('Category');
   },
+  tags() {
+    // https://bookshelfjs.org/api.html#Model-instance-belongsToMany
+    return this.belongsToMany(
+      'Tag', // the model to be referenced
+      'products_tags', // joinTableName - The pivot table name
+      'product_id', // foreignKey - The column in the pivot table that corresponds to this model's key 
+      'tag_id', // otherKey - The column in the pivot table that corresponds to the referenced model's key
+      'id', // foreignKeyTarget - The column name in this model that corresponds to `foreignKey`
+      'id', // otherKeyTarget - The column name in the referenced table that corresponds to `otherKey`
+    );
+
+    // The extra parameters are optional as long as the table and column names are set up according to the convention
+    // spelled out by bookshelf. Should the names not conform to convention, they can be customised based on the
+    // parameter descriptions above.
+  }
 });
 
 const Categories = bookshelf.model('Category', {
@@ -17,10 +32,18 @@ const Categories = bookshelf.model('Category', {
     //
     // In this case, the 2nd parameter 'category_id' is optional.
     return this.hasMany('Product', 'category_id');
-  }
+  },
+});
+
+const Tags = bookshelf.model('Tag', {
+  tableName: 'tags',
+  products() {
+    return this.belongsToMany('Product');
+  },
 })
 
 module.exports = {
   Products,
   Categories,
+  Tags,
 };

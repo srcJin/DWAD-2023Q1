@@ -25,7 +25,7 @@ const bootstrapField = function (name, object) {
     return '<div class="form-group">' + label + widget + error + '</div>';
 };
 
-const createProductForm = function(categories) {
+const createProductForm = function(categories, tags) {
     // forms.create allows us to create a new form definition
     // instead of using HTML to write the forms, we use objects to define them
     // the `key` will be the value for the name attribute
@@ -54,6 +54,15 @@ const createProductForm = function(categories) {
             },
             "widget": widgets.select(),
             "choices": categories,
+        }),
+        "tags": fields.string({
+            "required": true,
+            "errorAfterField": true,
+            "cssClasses": {
+                "label": ['form-label'],
+            },
+            "widget": widgets.multipleSelect(),
+            "choices": tags,
         })
     });
 }

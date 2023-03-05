@@ -3,12 +3,14 @@ const { createProductForm, bootstrapField } = require("../forms")
 const router = express.Router();
 
 const {
-  Products, Categories
+  Products, Categories, Tags
 } = require('../models');
 
 router.get('/', async (req, res) => {
   // SELECT * FROM products;
-  let products = await Products.collection().fetch({withRelated: ['category']});
+  let products = await Products.collection().fetch({withRelated: ['category', 'tags']});
+  console.log('get', JSON.stringify(products.toJSON(), null, 2));
+
   res.render('products/index', {
     products: products.toJSON(),
   });
@@ -19,7 +21,10 @@ router.get("/create", async function(req,res){
   let categoryObjects = await Categories.fetchAll();
   let categories = categoryObjects.map((category) => [category.get('id'), category.get('name')]);
 
-  const productForm = createProductForm(categories);
+  let tagObjects = await Tags.fetchAll();
+  let tags = tagObjects.map((tag) => [tag.get('id'), tag.get('name')]);
+
+  const productForm = createProductForm(categories, tags);
   res.render("products/create", {
     "form": productForm.toHTML(bootstrapField)
   })
@@ -30,7 +35,12 @@ router.post("/create", async function(req,res){
   // recreate the form object first
   let categoryObjects = await Categories.fetchAll();
   let categories = categoryObjects.map((category) => [category.get('id'), category.get('name')]);
-  const productForm = createProductForm(categories);
+
+  let tagObjects = await Tags.fetchAll();
+  let tags = tagObjects.map((tag) => [tag.get('id'), tag.get('name')]);
+
+  const productForm = createProductForm(categories, tags);
+
 
   // handle will process the form for us
   // first parameter: req
@@ -41,10 +51,15 @@ router.post("/create", async function(req,res){
 
        // one instance of Products will represent one row
        // in the Products table
-       const product = new Products(form.data);
+       const {tags, ...productData} = form.data;
+       const product = new Products(productData);
 
        // remember to save the newly created product
        await product.save();
+
+       if (tags) {
+        await product.tags().attach(tags.split(','));
+       }
 
        console.log(form.data);
        res.redirect("/products");
@@ -72,19 +87,28 @@ router.get("/update/:product_id", async function(req,res){
   const product = await Products.where({
     "id": productId
   }).fetch({
-    "require": true
+    "require": true,
+    "withRelated": ['tags'],
   });
 
   // create product form
   let categoryObjects = await Categories.fetchAll();
   let categories = categoryObjects.map((category) => [category.get('id'), category.get('name')]);
-  const productForm = createProductForm(categories);
+
+  let tagObjects = await Tags.fetchAll();
+  let tags = tagObjects.map((tag) => [tag.get('id'), tag.get('name')]);
+
+  const productForm = createProductForm(categories, tags);
 
   // set the initial value for each field
   productForm.fields.name.value = product.get('name');
   productForm.fields.cost.value = product.get('cost');
   productForm.fields.description.value = product.get('description');
   productForm.fields.category_id.value = product.get('category_id');
+
+  // https://bookshelfjs.org/api.html#Collection-instance-pluck - returns an array of values based on the selected column name
+  const selectedTags = await product.related('tags').pluck('id');
+  productForm.fields.tags.value = selectedTags;
 
   res.render("products/update", {
     "form": productForm.toHTML(bootstrapField),
@@ -97,29 +121,38 @@ router.get("/update/:product_id", async function(req,res){
 router.post("/update/:product_id",  async function(req,res){
   let categoryObjects = await Categories.fetchAll();
   let categories = categoryObjects.map((category) => [category.get('id'), category.get('name')]);
-  const productForm = createProductForm(categories);
+
+  let tagObjects = await Tags.fetchAll();
+  let tags = tagObjects.map((tag) => [tag.get('id'), tag.get('name')]);
+
+  const productForm = createProductForm(categories, tags);
 
   // fetch the product that we want to edit
   const productId = req.params.product_id;
   const product = await Products.where({
     "id": productId
   }).fetch({
-    "require": true
+    "require": true,
+    "withRelated": ['tags'],
   });
   productForm.handle(req, {
     "success": async function(form) {
-      // product.set("name", form.data.name);
-      // product.set("cost", form.data.cost);
-      // product.set("description", form.data.description);
+      const {tags, ...productData} = form.data;
 
-      product.set(form.data);  // save everything in form.data to the product
+      product.set(productData);  // save everything in form.data to the product
                                // IMPORTANT: all the keys in form.data must exist
                                // as columns in the products table for this shortcut to work
       await product.save();
 
+      // update the tags by first removing the unnecessary ones
+      const tagIds = tags.split(',');
+      const existingTagIds = product.related('tags').pluck('id');
+      const toRemove = existingTagIds.filter(tag => !tagIds.includes(tag));
+
+      await product.tags().detach(toRemove);
+      await product.tags().attach(tagIds);
+
       res.redirect("/products");
-
-
     },
     "error": function(form) {
       res.render("/products/update", {
