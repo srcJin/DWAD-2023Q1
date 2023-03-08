@@ -72,6 +72,9 @@ app.use('/', landingRoutes);
 app.use('/products', productsRoutes);
 app.use('/users', usersRoutes);
 
+// register a csrf partial so we can reuse the same template to add csrf token into a form
+hbs.handlebars.registerPartial('csrf', '<input type="hidden" name="_csrf" value="{{csrfToken}}"/>');
+
 async function main() {}
 main();
 
