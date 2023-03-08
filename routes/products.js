@@ -41,7 +41,6 @@ router.post("/create", async function(req,res){
 
   const productForm = createProductForm(categories, tags);
 
-
   // handle will process the form for us
   // first parameter: req
   // second parameter: object with three functions
@@ -62,6 +61,7 @@ router.post("/create", async function(req,res){
        }
 
        console.log(form.data);
+       req.flash('success_messages', `New Product ${product.get('name')} has been created.`);
        res.redirect("/products");
     },
     "empty": function(form) {

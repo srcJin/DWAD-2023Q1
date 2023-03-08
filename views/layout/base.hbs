@@ -14,6 +14,22 @@
   </head>
   <body>
     <div class="container">
+      {{#if successMessages}}
+        {{#each successMessages}}
+          <div class="alert alert-success">
+            {{this}}
+          </div>
+        {{/each}}
+      {{/if}}
+
+      {{#if errorMessages}}
+        {{#each errorMessages}}
+          <div class="alert alert-danger">
+            {{this}}
+          </div>
+        {{/each}}
+      {{/if}}
+
       {{#block "content"}}{{/block}}
     </div>
 

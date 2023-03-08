@@ -67,5 +67,56 @@ const createProductForm = function(categories, tags) {
     });
 }
 
+const createRegistrationForm = () => forms.create(
+    {
+        username: fields.string({
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label'],
+            },
+        }),
+        email: fields.email({
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label'],
+            },
+        }),
+        password: fields.password({
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label'],
+            },
+        }),
+        confirm_password: fields.password({
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label'],
+            },
+            validators: [validators.matchField('password')],
+        }),
+    }
+);
+
+const createLoginForm = () => forms.create({
+    username: fields.string({
+        required: true,
+        errorAfterField: true,
+        cssClasses: {
+            label: ['form-label'],
+        },
+    }),
+    password: fields.password({
+        required: true,
+        errorAfterField: true,
+        cssClasses: {
+            label: ['form-label'],
+        },
+    }),
+})
+
 // export the createProductForm functions etc. so that other JS files can use it
-module.exports =  { createProductForm, bootstrapField}
+module.exports =  { createProductForm, createRegistrationForm, createLoginForm, bootstrapField };

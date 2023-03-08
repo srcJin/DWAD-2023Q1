@@ -42,8 +42,13 @@ const Tags = bookshelf.model('Tag', {
   },
 })
 
+const Users = bookshelf.model('User', {
+  tableName: 'users',
+});
+
 module.exports = {
   Products,
   Categories,
   Tags,
+  Users,
 };
