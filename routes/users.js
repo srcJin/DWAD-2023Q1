@@ -1,9 +1,17 @@
 const express = require('express');
+const crypto = require('crypto');
 const { createRegistrationForm, bootstrapField, createLoginForm } = require('../forms');
 const router = express.Router();
 
 // import the User model so we can CRUD some users
 const { Users } = require('../models');
+
+// helper method to create a hash of a password
+const getHashedPassword = (password) => {
+  const sha256 = crypto.createHash('sha256');
+  const hash = sha256.update(password).digest('base64');
+  return hash;
+}
 
 router.get('/login', (req, res) => {
   if (req.session.user) {
@@ -31,7 +39,7 @@ router.post('/login', (req, res) => {
         return res.redirect('/users/login');
       }
 
-      if (user.get('password') !== form.data.password) {
+      if (user.get('password') !== getHashedPassword(form.data.password)) {
         // password does not match
         req.flash('error_messages', 'Invalid credentials');
         return res.redirect('/users/login');
@@ -88,7 +96,7 @@ router.post('/register', (req, res) => {
     success: async (form) => {
       const user = new Users({
         username: form.data.username,
-        password: form.data.password,
+        password: getHashedPassword(form.data.password),
         email: form.data.email,
       });
 
