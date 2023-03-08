@@ -1,6 +1,8 @@
 const express = require('express');
 const crypto = require('crypto');
 const { createRegistrationForm, bootstrapField, createLoginForm } = require('../forms');
+const { checkIfAuthenticated } = require('../middlewares');
+
 const router = express.Router();
 
 // import the User model so we can CRUD some users
@@ -70,7 +72,7 @@ router.post('/login', (req, res) => {
   });
 })
 
-router.get('/profile', (req, res) => {
+router.get('/profile', checkIfAuthenticated, (req, res) => {
   const user = req.session.user;
 
   if (!user) {

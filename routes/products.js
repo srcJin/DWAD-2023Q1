@@ -1,12 +1,14 @@
 const express = require('express');
 const { createProductForm, bootstrapField } = require("../forms")
+const { checkIfAuthenticated } = require('../middlewares');
+
 const router = express.Router();
 
 const {
   Products, Categories, Tags
 } = require('../models');
 
-router.get('/', async (req, res) => {
+router.get('/', checkIfAuthenticated, async (req, res) => {
   // SELECT * FROM products;
   let products = await Products.collection().fetch({withRelated: ['category', 'tags']});
   console.log('get', JSON.stringify(products.toJSON(), null, 2));
@@ -17,7 +19,7 @@ router.get('/', async (req, res) => {
 })
 
 // display the form for creating a new product
-router.get("/create", async function(req,res){
+router.get("/create", checkIfAuthenticated, async function(req,res){
   let categoryObjects = await Categories.fetchAll();
   let categories = categoryObjects.map((category) => [category.get('id'), category.get('name')]);
 
@@ -31,7 +33,7 @@ router.get("/create", async function(req,res){
 })
 
 // process the submitted form
-router.post("/create", async function(req,res){
+router.post("/create", checkIfAuthenticated, async function(req,res){
   // recreate the form object first
   let categoryObjects = await Categories.fetchAll();
   let categories = categoryObjects.map((category) => [category.get('id'), category.get('name')]);
@@ -81,7 +83,7 @@ router.post("/create", async function(req,res){
 
 
 // display the form for modifying a product
-router.get("/update/:product_id", async function(req,res){
+router.get("/update/:product_id", checkIfAuthenticated, async function(req,res){
   const productId = req.params.product_id;
   // SELECT * where products where id = '1'
   const product = await Products.where({
@@ -118,7 +120,7 @@ router.get("/update/:product_id", async function(req,res){
 })
 
 // update the product
-router.post("/update/:product_id",  async function(req,res){
+router.post("/update/:product_id", checkIfAuthenticated, async function(req,res){
   let categoryObjects = await Categories.fetchAll();
   let categories = categoryObjects.map((category) => [category.get('id'), category.get('name')]);
 
@@ -170,7 +172,7 @@ router.post("/update/:product_id",  async function(req,res){
 })
 
 // delete the product
-router.get("/delete/:product_id", async function(req,res){
+router.get("/delete/:product_id", checkIfAuthenticated, async function(req,res){
   const productId = req.params.product_id;
   // SELECT * where products where id = '1'
   const product = await Products.where({
@@ -184,7 +186,7 @@ router.get("/delete/:product_id", async function(req,res){
   })
 })
 
-router.post("/delete/:product_id", async function(req,res){
+router.post("/delete/:product_id", checkIfAuthenticated, async function(req,res){
   const productId = req.params.product_id;
   // SELECT * where products where id = '1'
   const product = await Products.where({

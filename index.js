@@ -35,9 +35,12 @@ app.use(function (req, res, next) {
   res.locals.successMessages = req.flash('success_messages');
   res.locals.errorMessages = req.flash('error_messages');
 
+  // This is so that the rendered page has access to the logged in user details
+  res.locals.user = req.session.user;
+
   // call next to hand over to the next middleware/handler in the pipeline
   next();
-})
+});
 
 // static folder
 app.use(express.static('.')); // Seems like express@4.18.2 already appends 'public' to the path
