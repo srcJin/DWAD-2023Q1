@@ -3,6 +3,7 @@ const hbs = require('hbs'); // https://www.npmjs.com/package/hbs
 const wax = require('wax-on'); // https://www.npmjs.com/package/wax-on
 const session = require('express-session');
 const flash = require('connect-flash');
+const csurf = require('csurf');
 const FileStore = require('session-file-store')(session);
 
 
@@ -25,6 +26,20 @@ app.use(session({
   saveUninitialized: true,
 }));
 
+// enable forms
+app.use(
+  express.urlencoded({
+    extended: false
+  })
+);
+
+// enable csrf
+app.use(csurf());
+
+// Note that the urlencoded middleware needs to come first before
+// the csurf middleware so that the urlencoded can parse the form data
+// before the csurf middleware can consume it.
+
 // add support for flash
 // flash is a special area of the session used for storing messages
 app.use(flash());
@@ -38,6 +53,9 @@ app.use(function (req, res, next) {
   // This is so that the rendered page has access to the logged in user details
   res.locals.user = req.session.user;
 
+  // share the csrf token to frontend
+  res.locals.csrfToken = req.csrfToken();
+
   // call next to hand over to the next middleware/handler in the pipeline
   next();
 });
@@ -48,13 +66,6 @@ app.use(express.static('.')); // Seems like express@4.18.2 already appends 'publ
 // setup wax-on
 wax.on(hbs.handlebars); // register wax-on helpers with handlerbars
 wax.setLayoutPath('./views/layout');
-
-// enable forms
-app.use(
-  express.urlencoded({
-    extended: false
-  })
-);
 
 // register routes
 app.use('/', landingRoutes);
