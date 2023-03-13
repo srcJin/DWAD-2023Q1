@@ -28,7 +28,10 @@ router.get("/create", checkIfAuthenticated, async function(req,res){
 
   const productForm = createProductForm(categories, tags);
   res.render("products/create", {
-    "form": productForm.toHTML(bootstrapField)
+    "form": productForm.toHTML(bootstrapField),
+    cloudinaryName: process.env.CLOUDINARY_NAME,
+    cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
+    cloudinaryPreset: process.env.CLOUDINARY_UPLOAD_PRESET
   })
 })
 
@@ -107,6 +110,7 @@ router.get("/update/:product_id", checkIfAuthenticated, async function(req,res){
   productForm.fields.cost.value = product.get('cost');
   productForm.fields.description.value = product.get('description');
   productForm.fields.category_id.value = product.get('category_id');
+  productForm.fields.image_url.value = product.get('image_url');
 
   // https://bookshelfjs.org/api.html#Collection-instance-pluck - returns an array of values based on the selected column name
   const selectedTags = await product.related('tags').pluck('id');
@@ -114,7 +118,10 @@ router.get("/update/:product_id", checkIfAuthenticated, async function(req,res){
 
   res.render("products/update", {
     "form": productForm.toHTML(bootstrapField),
-    "product": product.toJSON()  //  convert the Product bookshelf object to the JSON format so hbs files can use it
+    "product": product.toJSON(),  //  convert the Product bookshelf object to the JSON format so hbs files can use it
+    "cloudinaryName": process.env.CLOUDINARY_NAME,
+    "cloudinaryApiKey": process.env.CLOUDINARY_API_KEY,
+    "cloudinaryPreset": process.env.CLOUDINARY_UPLOAD_PRESET,
   })
 
 })

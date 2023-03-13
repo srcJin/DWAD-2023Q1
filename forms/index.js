@@ -63,6 +63,9 @@ const createProductForm = function(categories, tags) {
             },
             "widget": widgets.multipleSelect(),
             "choices": tags,
+        }),
+        'image_url': fields.string({
+            widget: widgets.hidden(),
         })
     });
 }

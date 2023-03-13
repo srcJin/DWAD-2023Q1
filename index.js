@@ -12,6 +12,7 @@ const FileStore = require('session-file-store')(session);
 const landingRoutes = require('./routes/landing');
 const productsRoutes = require('./routes/products');
 const usersRoutes = require('./routes/users');
+const cloudinaryRoutes = require('./routes/cloudinary.js')
 
 // create an instance of express app
 const app = express();
@@ -72,6 +73,7 @@ wax.setLayoutPath('./views/layout');
 app.use('/', landingRoutes);
 app.use('/products', productsRoutes);
 app.use('/users', usersRoutes);
+app.use('/cloudinary', cloudinaryRoutes);
 
 // register a csrf partial so we can reuse the same template to add csrf token into a form
 hbs.handlebars.registerPartial('csrf', '<input type="hidden" name="_csrf" value="{{csrfToken}}"/>');
