@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const hbs = require('hbs'); // https://www.npmjs.com/package/hbs
 const wax = require('wax-on'); // https://www.npmjs.com/package/wax-on
@@ -21,7 +22,7 @@ app.set('view engine', 'hbs'); // Add support for handlebars templating engine {
 // add support for session management
 app.use(session({
   store: new FileStore(),
-  secret: '__secret__', // TODO: Store this in env
+  secret: process.env['SESSION_SECRET'],
   resave: false,
   saveUninitialized: true,
 }));

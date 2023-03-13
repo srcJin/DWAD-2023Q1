@@ -1,9 +1,11 @@
 {
   "dev": {
     "driver": "mysql",
-    "user": "foo",
-    "password": "bar",
-    "database": "organic"
+    "user": { "ENV": "MYSQL_USERNAME" },
+    "password": { "ENV": "MYSQL_PASSWORD" },
+    "database": { "ENV": "MYSQL_DATABASE" },
+    "host": { "ENV": "MYSQL_HOST" },
+    "port": { "ENV": "MYSQL_PORT" }
   },
   "__comment__": "https://db-migrate.readthedocs.io/en/latest/Getting%20Started/configuration/"
 }
