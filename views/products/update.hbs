@@ -15,11 +15,18 @@
             {{/if}}
         </div>
 
+        <div class="card" id="upload_card" style="margin-top: 8px">
+            <div class="card-body">
+                <a href="#" class="btn btn-primary" id="upload_widget">Upload</a>
+                <img src="" style="display:none" id="uploaded_image"/>
+            </div>
+        </div>
+
         <input type="submit" class="btn btn-primary mt-3"/>
     </form>
 {{/block}}
 
-{{#block js}}
+{{#block "js"}}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"
     integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ=="
