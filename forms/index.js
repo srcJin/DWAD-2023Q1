@@ -121,5 +121,57 @@ const createLoginForm = () => forms.create({
     }),
 })
 
+const createSearchForm = (categories, tags) => {
+    return forms.create({
+        'name': fields.string({
+            required: false,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label']
+            }
+        }),
+        'min_cost': fields.string({
+            required: false,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label']
+            },
+            'validators': [validators.integer()]
+        }),
+        'max_cost': fields.string({
+            required: false,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label']
+            },
+            'validators': [validators.integer()]
+        }),
+        'category_id': fields.string({
+            label: 'Category',
+            required: false,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label']
+            },
+            widget: widgets.select(),
+            choices: categories
+        }),
+        'tags': fields.string({
+            required:false,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label']
+            },
+            widget: widgets.multipleSelect(),
+            choices: tags
+        }),
+    });
+}
 // export the createProductForm functions etc. so that other JS files can use it
-module.exports =  { createProductForm, createRegistrationForm, createLoginForm, bootstrapField };
+module.exports =  {
+    createProductForm,
+    createRegistrationForm,
+    createLoginForm,
+    createSearchForm,
+    bootstrapField
+};
