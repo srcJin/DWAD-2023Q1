@@ -1,5 +1,5 @@
 const express = require('express');
-const { createProductForm, bootstrapField } = require("../forms")
+const { createProductForm, bootstrapField, createSearchForm } = require("../forms")
 const { checkIfAuthenticated } = require('../middlewares');
 
 const router = express.Router();
@@ -9,13 +9,65 @@ const {
 } = require('../models');
 
 router.get('/', checkIfAuthenticated, async (req, res) => {
-  // SELECT * FROM products;
-  let products = await Products.collection().fetch({withRelated: ['category', 'tags']});
-  console.log('get', JSON.stringify(products.toJSON(), null, 2));
+  // Get all categories and tags
+  let categoryObjects = await Categories.fetchAll();
+  let categories = categoryObjects.map((category) => [category.get('id'), category.get('name')]);
+  categories.unshift(['0', '----']); // Add empty category to represent no category filter
 
-  res.render('products/index', {
-    products: products.toJSON(),
-  });
+  let tagObjects = await Tags.fetchAll();
+  let tags = tagObjects.map((tag) => [tag.get('id'), tag.get('name')]);
+
+  let searchForm = createSearchForm(categories, tags);
+  let query = Products.collection();
+  searchForm.handle(req, {
+    empty: async (form) => {
+      // Empty form submission - we take it as no filter so we fetch everything
+      let products = await query.fetch({withRelated: ['category', 'tags']});
+      res.render('products/index', {
+        form: searchForm.toHTML(bootstrapField),
+        products: products.toJSON(),
+      });
+    },
+    error: async (form) => {
+      // When there is error, we take it as no filter so we fetch everything
+      let products = await query.fetch({withRelated: ['category', 'tags']});
+      res.render('products/index', {
+        form: searchForm.toHTML(bootstrapField),
+        products: products.toJSON(),
+      });
+    },
+    success: async (form) => {
+      if (form.data.name) {
+        query.where('name', 'like', `%${form.data.name}%`);
+      }
+
+      if (form.data.category_id && form.data.category_id !== '0') {
+        query.where('category_id', '=', form.data.category_id);
+      }
+
+      if (form.data.min_cost) {
+        query.where('cost', '>=', form.data.min_cost);
+      }
+
+      if (form.data.max_cost) {
+        query.where('cost', '>=', form.data.min_cost);
+      }
+
+      if (form.data.tags) {
+        // knex.query('join', '<JOIN_TABLE_NAME>', '<ORIGINAL_TABLE_COLUMN>', '<JOIN_TABLE_COLUMN>')
+        // This creates an "inner join `JOIN_TABLE_NAME` on `ORIGINAL_TABLE_COLUMN` = `<JOIN_TABLE_COLUMN>`" statement
+        // `join` is a function exposed by the Knex Query Builder https://knexjs.org/guide/query-builder.html#join
+        query.query('join', 'products_tags', 'products.id', 'product_id')
+          .where('tag_id', 'in', form.data.tags.split(','));
+      }
+
+      let products = await query.fetch({withRelated: ['category', 'tags']});
+      res.render('products/index', {
+        form: searchForm.toHTML(bootstrapField),
+        products: products.toJSON(),
+      });
+    }
+  })
 })
 
 // display the form for creating a new product
