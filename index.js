@@ -7,12 +7,14 @@ const flash = require("connect-flash");
 const csurf = require("csurf");
 const FileStore = require("session-file-store")(session);
 const { useRenderForm } = require("./middlewares");
+const { FlashMessages } = require("./constants");
 
 // import in the routes
 const landingRoutes = require("./routes/landing");
 const productsRoutes = require("./routes/products");
 const usersRoutes = require("./routes/users");
 const cloudinaryRoutes = require("./routes/cloudinary.js");
+const shoppingCartRoutes = require("./routes/shoppingCart.js");
 
 // create an instance of express app
 const app = express();
@@ -51,8 +53,8 @@ app.use(function (req, res, next) {
   // The res.locals is an object that contains the local variables for the response
   // which are scoped to the request only and therefore just available for the views
   // rendered during that request or response cycle
-  res.locals.successMessages = req.flash("success_messages");
-  res.locals.errorMessages = req.flash("error_messages");
+  res.locals.successMessages = req.flash(FlashMessages.SuccessMessages);
+  res.locals.errorMessages = req.flash(FlashMessages.ErrorMessages);
 
   // This is so that the rendered page has access to the logged in user details
   res.locals.user = req.session.user;
@@ -83,6 +85,7 @@ app.use("/", landingRoutes);
 app.use("/products", productsRoutes);
 app.use("/users", usersRoutes);
 app.use("/cloudinary", cloudinaryRoutes);
+app.use("/cart", shoppingCartRoutes);
 
 // register a csrf partial so we can reuse the same template to add csrf token into a form
 hbs.handlebars.registerPartial(

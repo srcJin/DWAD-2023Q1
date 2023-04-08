@@ -67,6 +67,15 @@ router.post("/register", (req, res) => {
   });
 });
 
+function renderForm(res) {
+  return function (form) {
+    // will be called if the form is submitted with errors
+    res.render("users/login", {
+      form: form.toHTML(bootstrapField),
+    });
+  };
+}
+
 router.get("/logout", (req, res) => {
   if (req.session.user) {
     req.session.user = null;

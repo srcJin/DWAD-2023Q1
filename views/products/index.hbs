@@ -1,12 +1,12 @@
 {{#extends "base"}}
   {{#block "content"}}
-  <h1>Search</h1>
-  <form method="GET">
-    {{{form}}}
+    <h1>Search</h1>
+    <form method="GET">
+      {{{form}}}
 
-    <input type="submit" class="mb-3 mt-3 btn btn-primary" value="Search" />
-  </form>
-  <h1>All Products</h1>
+      <input type="submit" class="mb-3 mt-3 btn btn-primary" value="Search" />
+    </form>
+    <h1>All Products</h1>
 
     <a href="/products/create" class="btn btn-primary">Create New</a>
 
@@ -47,8 +47,16 @@
               {{/each}}
             </td>
             <td>
-              <a href="/products/update/{{this.id}}" class="btn btn-success btn-sm">Edit</a>
-              <a href="/products/delete/{{this.id}}" class="btn btn-danger btn-sm">Delete</a>
+              <a href="/cart/{{this.id}}/add" class="btn btn-success btn-sm">Add
+                to cart</a>
+              <a
+                href="/products/update/{{this.id}}"
+                class="btn btn-success btn-sm"
+              >Edit</a>
+              <a
+                href="/products/delete/{{this.id}}"
+                class="btn btn-danger btn-sm"
+              >Delete</a>
 
             </td>
           </tr>
