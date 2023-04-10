@@ -28,7 +28,7 @@ exports.searchProduct = ({ name, categoryId, minCost, maxCost, tags }) => {
     query.where("cost", ">=", minCost);
   }
   if (maxCost) {
-    query.where("cost", ">=", maxCost);
+    query.where("cost", "<=", maxCost);
   }
   if (tags) {
     // knex.query('join', '<JOIN_TABLE_NAME>', '<ORIGINAL_TABLE_COLUMN>', '<JOIN_TABLE_COLUMN>')

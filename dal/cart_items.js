@@ -32,7 +32,7 @@ exports.removeFromCart = async (userId, productId) => {
 
 exports.updateQuantity = async (userId, productId, newQuantity) => {
   const cartItem = await this.getCartItemByUserAndProduct(userId, productId);
-  if (cartItem) {
+  if (cartItem && newQuantity > 0) {
     cartItem.set("quantity", newQuantity);
     return await cartItem.save();
   }

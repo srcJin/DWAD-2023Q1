@@ -1,7 +1,11 @@
 const express = require("express");
 const router = express.Router();
 
-const { createRegistrationForm, createLoginForm } = require("../forms");
+const {
+  createRegistrationForm,
+  createLoginForm,
+  bootstrapField,
+} = require("../forms");
 const { checkIfAuthenticated } = require("../middlewares");
 
 const { verify, createUser } = require("../dal/users");

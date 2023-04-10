@@ -28,6 +28,15 @@ class CartService {
   async removeFromCart(productId) {
     await cartData.removeFromCart(this.userId, productId);
   }
+
+  async updateQuantity(productId, newQuantity) {
+    let cartItem = await cartData.updateQuantity(
+      this.userId,
+      productId,
+      newQuantity
+    );
+    return cartItem;
+  }
 }
 
 module.exports = CartService;
