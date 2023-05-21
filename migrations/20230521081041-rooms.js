@@ -26,19 +26,21 @@ exports.up = function(db) {
   // each KEY will be one column
   // each VALUE will describe the properties of the column
 
-  return db.createTable('rooms',{
+  return db.createTable('product_rooms',{
     room_id: { type: 'int', primaryKey:true, autoIncrement:true, unsigned: true},
     name: { type: 'string', length:255, notNull:true},
     // cost is int because we store money in cents
     cost: {type: 'int', unsigned:false, notNull: false},
     description:'text',
     image_url:'text',
+    size:'text',
+    style:'text',
     category_id:'int',
 })
 };
 
 exports.down = function(db) {
-  return db.dropTable('rooms');};
+  return db.dropTable('product_rooms');};
 
 exports._meta = {
   "version": 1
