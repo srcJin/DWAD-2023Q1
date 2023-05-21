@@ -1,0 +1,12 @@
+{{#extends 'base'}}
+
+{{#block 'content'}}
+<h1>Create New Room</h1>
+<form method="POST">
+    {{!-- {{{}}}  allows us to render out raw HTML.  --}}
+    {{{form}}}
+    <input type="submit" value="Add Room" class="btn btn-primary"/>
+</form>
+{{/block}}
+
+{{/extends}}
