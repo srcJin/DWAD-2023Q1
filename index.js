@@ -27,7 +27,9 @@ app.use(
 
 // import in the landing routes
 const landingRoutes = require('./routes/landing');
-const productRoutes = require('./routes/products');
+const roomRoutes = require('./routes/rooms');
+const treatmentRoutes = require('./routes/treatments');
+const headshotRoutes = require('./routes/headshots');
 
 
 async function main() {
@@ -38,7 +40,9 @@ async function main() {
 
     // use landing Routes
     app.use('/', landingRoutes);
-    app.use('/products', productRoutes);
+    app.use('/room', roomRoutes);
+    app.use('/headshot', headshotRoutes);
+    app.use('/treatment', treatmentRoutes);
 
 }
 
