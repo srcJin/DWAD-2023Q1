@@ -41,7 +41,9 @@ const createRoomForm = () => {
             errorAfterField: true,
             cssClasses: {
                 label: ['form-label']
-            }
+            },
+            // lab 8 step 9: add a validator
+            'validators':[validators.integer()]
         }),
         'description': fields.string({
             required: true,

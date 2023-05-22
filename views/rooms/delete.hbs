@@ -1,0 +1,18 @@
+{{#extends 'base'}}
+
+
+{{!-- display the confirmation for deleting a product via specifying its ID in the URL. --}}
+
+
+{{#block 'content'}}
+<h1>Deleting {{room.name}}</h1>
+
+<form method="POST">
+    <div class="alert alert-danger">
+        <p>Are you sure you want to delete {{room.name}}?</p>
+        <input type="submit" class="btn btn-danger" value="Yes"/>
+        <a href="/rooms" class="btn btn-success">No</a>
+    </div>
+</form>
+{{/block}}
+{{/extends}}

@@ -1,0 +1,14 @@
+{{#extends 'base'}}
+
+
+{{!-- the hbs file to display the form --}}
+
+{{#block 'content'}}
+<h1>Update Room: {{room.name}}</h1>
+<form method="POST">
+    {{{form}}}
+    <input type="submit" value="Update Room" class="btn btn-primary"/>
+</form>
+{{/block}}
+
+{{/extends}}
